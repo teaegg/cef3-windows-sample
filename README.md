@@ -16,7 +16,7 @@ Or [download as ZIP](https://github.com/teaegg/cef3-windows-sample/archive/maste
 1. open doomtool.vcxproj with vs2010+.
 2. build
 
-Or run this doomtool.exe on /cef3-windows-sample/build/Release/doomtool.exe
+Or run the doomtool.exe in /cef3-windows-sample/build/Release/
 
 ## Contributing
 
