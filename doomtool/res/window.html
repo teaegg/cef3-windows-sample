@@ -1,0 +1,133 @@
+<html>
+<head>
+<title>Window Test</title>
+<style>
+    * 
+    {
+        margin: 0;
+        padding: 0;
+    }
+    html
+    {
+        background: transparent;
+        -webkit-user-select: none;
+        width: 100%;
+        height: 100%;
+    }
+    body 
+    {
+        width: 100%;
+        height: 100%;
+        vertical-align: middle;
+        text-align:center;
+        background: transparent;
+        box-sizing:border-box;
+        overflow: hidden;
+    }
+    #container
+    {
+        position:absolute;
+        top:0;
+        bottom:0;
+        left:0;
+        right:0;
+        margin:auto;
+        width: 100%;
+        height:100%;
+        background: rgba(255,255,255,1);
+        box-shadow: 0 3px 7px rgba(0,0,0,0.5);
+        overflow: hidden;
+        border-radius: 5px;
+    }
+    #titlebar
+    {
+        background: lightblue;
+        width: 100%;
+        height: 100px;
+    }
+    @-webkit-keyframes window-opened /* Safari ºÍ Chrome */
+    {
+        0%    {-webkit-transform:scale(0.95, 0.95);}
+        60%   {-webkit-transform:scale(1.05, 1.05);}
+        100%  {-webkit-transform:scale(1, 1);}
+    }
+    @-webkit-keyframes minimize-animation /* Safari ºÍ Chrome */
+    {
+        0%    {-webkit-transform:scale(1, 1);}
+        40%   {-webkit-transform:scale(1.05, 1.05);}
+        100%  {-webkit-transform:scale(0, 0);}
+    }
+    .minimize-animation {
+        -webkit-animation:minimize-animation 0.5s;
+    }
+    .animated {
+         -webkit-animation:window-opened 0.5s;
+    }
+</style>
+<script>
+    function hasClass(element, className) {
+        var reg = new RegExp('(\\s|^)' + className + '(\\s|$)');
+        return element.className.match(reg);
+    }
+    function addClass(element, className) {
+        if (!this.hasClass(element, className)) {
+            element.className += " " + className;
+        }
+    }
+    function removeClass(element, className) {
+        if (hasClass(element, className)) {
+            var reg = new RegExp('(\\s|^)' + className + '(\\s|$)');
+            element.className = element.className.replace(reg, ' ');
+        }
+    }
+
+    var isTopMost = false;
+    var container;
+    onload = function () {
+        //window.show();
+        container = document.getElementById("container");
+        addClass(container, "animated");
+    };
+
+    function minimizeAnimate() {
+        container = document.getElementById("container");
+        removeClass(container, "animated");
+        removeClass(container, "minimize-animation");
+        addClass(container, "minimize-animation");
+        setTimeout("window.minimize();", 500);
+    }
+    var thisLevel = 2;
+    function popupWindow() {
+        var win = window.open("http://localhost/");
+    }
+    
+</script>
+</head>
+<body>
+<div id="container" class="something">
+<div id="titlebar" dragable-region  
+ondblclick="window.maximize();" 
+style="-webkit-user-select: none;">titlebar</div>
+<form dragable-region>
+Click a button to perform the associated window action.
+<br/><input type="button" onclick="popupWindow();" value="popup">
+<br/><input type="button" onclick="window.zoomLevel = thisLevel++;" value="zoomLevel">
+<br/><input type="button" onclick="window.setZoomLevel(thisLevel++);" value="setZoomLevel">
+<br/><input type="button" onclick="window.setTopMost(!isTopMost);" value="setTopMost">
+<br/><input type="button" onclick="window.moveTo(100, 100);" value="moveTo">
+<br/><input type="button" onclick="window.moveBy(-100, 100);" value="moveBy">
+<br/><input type="button" onclick="window.resizeTo(600, 400);" value="resizeTo">
+<br/><input type="button" onclick="window.resizeBy(-100, 100)" value="resizeBy">
+<br/><input type="button" onclick="window.focus();" value="focus">
+<br/><input type="button" onclick="window.blur();" value="blur">
+<br/><input type="button" onclick="window.show();" value="show">
+<br/><input type="button" onclick="window.hide();" value="hide">
+<br/><input type="button" onclick="window.maximize();" value="maximize">
+<br/><input type="button" onclick="window.minimize()" value="minimize">
+<br/><input type="button" onclick="minimizeAnimate();" value="minimizeAnimate">
+<br/><input type="button" onclick="window.restore();" value="restore">
+<br/><input type="button" onclick="window.close();" value="close">
+</form>
+</div>
+</body>
+</html>

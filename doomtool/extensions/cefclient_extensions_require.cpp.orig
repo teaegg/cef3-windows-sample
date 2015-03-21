@@ -1,0 +1,155 @@
+#include "cefclient_extensions_require.h"
+#include "include/cef_urlrequest.h"
+
+namespace extensions_require {
+
+namespace {
+
+// Handle messages in the browser process.
+class ProcessMessageDelegate : public ClientHandler::ProcessMessageDelegate {
+public:
+    ProcessMessageDelegate() {
+    }
+
+    // From ClientHandler::ProcessMessageDelegate.
+    virtual bool OnProcessMessageReceived(
+        CefRefPtr<ClientHandler> handler,
+        CefRefPtr<CefBrowser> browser,
+        CefProcessId source_process,
+        CefRefPtr<CefProcessMessage> message) OVERRIDE {
+        return true;
+    }
+
+    IMPLEMENT_REFCOUNTING(ProcessMessageDelegate);
+};
+
+class URLRequestClient : public CefURLRequestClient {
+public:
+    URLRequestClient()
+        : upload_total_(0),
+          download_total_(0) {}
+
+    virtual void OnRequestComplete(CefRefPtr<CefURLRequest> request) OVERRIDE {
+        CefURLRequest::Status status = request->GetRequestStatus();
+        CefURLRequest::ErrorCode error_code = request->GetRequestError();
+        CefRefPtr<CefResponse> response = request->GetResponse();
+
+        ::MessageBox(NULL, L"OnRequestComplete", NULL, 0);
+    }
+
+    virtual void OnUploadProgress(CefRefPtr<CefURLRequest> request,
+                                  uint64 current,
+                                  uint64 total) OVERRIDE {
+        upload_total_ = total;
+    }
+
+    virtual void OnDownloadProgress(CefRefPtr<CefURLRequest> request,
+                                    uint64 current,
+                                    uint64 total) OVERRIDE {
+        download_total_ = total;
+    }
+
+    virtual void OnDownloadData(CefRefPtr<CefURLRequest> request,
+                                const void* data,
+                                size_t data_length) OVERRIDE {
+        download_data_ += std::string(static_cast<const char*>(data), data_length);
+    }
+
+    virtual bool GetAuthCredentials(bool isProxy,
+                                    const CefString& host,
+                                    int port,
+                                    const CefString& realm,
+                                    const CefString& scheme,
+                                    CefRefPtr<CefAuthCallback> callback) OVERRIDE {
+        return true;
+    }
+
+private:
+    uint64 upload_total_;
+    uint64 download_total_;
+    std::string download_data_;
+
+private:
+    IMPLEMENT_REFCOUNTING(URLRequestClient);
+};
+
+// Handles the native implementation for the client_app extension.
+class V8Handler : public CefV8Handler {
+public:
+    V8Handler() {
+    }
+
+    virtual bool Execute(const CefString& name,
+                         CefRefPtr<CefV8Value> object,
+                         const CefV8ValueList& arguments,
+                         CefRefPtr<CefV8Value>& retval,
+                         CefString& exception) {
+        bool handled = false;
+
+        if(name == "require") {
+            if(arguments[0]->IsFunction() && arguments[1]->IsUndefined()) {
+                // require(function(){})
+                ::MessageBox(NULL, L"ExecuteFunction", NULL, 0);
+                CefV8ValueList args;
+                arguments[0]->ExecuteFunction(object, args);
+                handled = true;
+            } else if(arguments[0]->IsArray() && arguments[1]->IsFunction()) {
+                    // Set up the CefRequest object.
+                    CefRefPtr<CefRequest> request = CefRequest::Create();
+                    request->SetURL("http://localhost/");
+                    request->SetMethod("POST");
+
+                    // Create the client instance.
+                    CefRefPtr<URLRequestClient> client = new URLRequestClient();
+
+                    // Start the request. MyRequestClient callbacks will be executed asynchronously.
+                    CefRefPtr<CefURLRequest> url_request = CefURLRequest::Create(request, client.get());
+                    // To cancel the request: url_request->Cancel();
+
+                    handled = true;
+			}
+        }
+
+        if (!handled)
+            exception = "Invalid method arguments";
+
+        return true;
+    }
+
+    IMPLEMENT_REFCOUNTING(V8Handler);
+};
+
+class RenderDelegate : public ClientApp::RenderDelegate {
+public:
+    RenderDelegate() {
+    }
+
+    virtual void OnWebKitInitialized(CefRefPtr<ClientApp> app) {
+        std::string require_code =
+            "var require;"
+            "if(!require)"
+            "	require = {};"
+            "(function(){"
+            "	require = function(modules, callback) {"
+            "		native function require();"
+            "			return require(modules, callback);"
+            "	};"
+            "})()";
+        CefRegisterExtension("v8/require", require_code, new V8Handler());
+    }
+
+    IMPLEMENT_REFCOUNTING(RenderDelegate);
+};
+
+}  // namespace
+
+void CreateProcessMessageDelegates(
+    ClientHandler::ProcessMessageDelegateSet& delegates) {
+    delegates.insert(new ProcessMessageDelegate);
+}
+
+void CreateRenderDelegates(ClientApp::RenderDelegateSet& delegates) {
+    delegates.insert(new RenderDelegate);
+}
+
+}  // namespace extensions_require

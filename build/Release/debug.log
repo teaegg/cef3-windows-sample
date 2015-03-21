@@ -1,0 +1,6 @@
+[0129/163508:ERROR:child_process_launcher.cc(327)] Failed to launch child process
+[0129/163508:ERROR:child_process_launcher.cc(327)] Failed to launch child process
+[0129/170621:INFO:CONSOLE(0)] "Uncaught TypeError: Object 2 has no method 'addEventListener'", source: http://localhost/ (0)
+[0129/170642:INFO:CONSOLE(0)] "Uncaught TypeError: Object 2 has no method 'addEventListener'", source: http://localhost/ (0)
+[0129/170711:INFO:CONSOLE(0)] "Uncaught TypeError: Object 0 has no method 'addEventListener'", source: https://www.google.ca/?gfe_rd=cr&ei=PNnKVJC7BsermAK8i4DQCQ&gws_rd=ssl (0)
+[0129/170716:INFO:CONSOLE(0)] "Uncaught TypeError: Object 2 has no method 'addEventListener'", source: http://localhost/ (0)
