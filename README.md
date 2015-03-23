@@ -1,6 +1,7 @@
 # cef3-window-sample
 
- [Chromium Embedded Framework 3](http://bitbucket.org/chromiumembedded/cef) offscreen rendering example on windows
+ [Chromium Embedded Framework 3](http://bitbucket.org/chromiumembedded/cef) offscreen rendering example on windows.
+ GUI and animation build with html/css3.
 
 ![screenshot](http://vansky.com/images/webkit-based-ui.gif)
 
@@ -15,7 +16,7 @@ Or [download as ZIP](https://github.com/teaegg/cef3-windows-sample/archive/maste
 1. open doomtool.vcxproj with vs2010+.
 2. build
 
-Or run this doomtool.exe on /cef3-windows-sample/build/Release/doomtool.exe
+Or run the doomtool.exe in /cef3-windows-sample/build/Release/
 
 ## Contributing
 
