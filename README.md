@@ -3,7 +3,7 @@
  [Chromium Embedded Framework 3](http://bitbucket.org/chromiumembedded/cef) offscreen rendering example on windows.
  GUI and animation build with html/css3.
 
-![screenshot](http://vansky.com/images/webkit-based-ui.gif)
+![screenshot](https://github.com/teaegg/cef3-windows-sample/cef-based-ui.gif)
 
 ## Install
 
